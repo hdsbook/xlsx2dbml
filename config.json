@@ -1,0 +1,19 @@
+{
+    "filterTables": [
+    
+    ],
+
+    "schemaFileName": "schema.xlsx",
+    "outputDBMLFileName": "schema.dbml",
+    "outputXlsxFileName": "匯出報表.xlsx",
+
+    "titleTableName": "Table 名稱",
+    "titleChinese": "中文欄位名稱",
+    "titleEnglish": "英文欄位名稱",
+    "titleDataType": "資料型態",
+    "titlePrimaryKey": "Primary Key",
+    "titleNotNull": "非NULL",
+    "titleDefault": "預設值",
+    "titleUnique": "Unique",
+    "titleReference": "Reference"
+}

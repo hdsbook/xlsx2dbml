@@ -1,0 +1,12 @@
+[
+	"COURSE",
+	"COURSE_TYPE",
+	"STUDENT",
+	"COURSE_STUDENT"
+]
+
+
+課程
+課程類型
+學生
+課程學生
