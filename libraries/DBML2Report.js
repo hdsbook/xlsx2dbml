@@ -1,6 +1,5 @@
 const fs = require('fs');
 const { Parser: DBMLParser } = require('@dbml/core');
-const path = require('path')
 const ExcelJS = require('exceljs');
 
 
@@ -14,7 +13,7 @@ const DBML2Report = function (filePath) {
         const { start, end } = error.location;
         const lines = dbmlContent.split('\n');
         const errorLines = lines.slice(start.line - 1, end.line);
-        
+
         console.error('DBML parse error:');
         console.error(`錯誤檔案：${filePath}:`);
         console.error(`錯誤行數：${start.line}:`);
@@ -31,19 +30,20 @@ DBML2Report.prototype.GetRefDic = function () {
     that.database.schemas.every(schema => {
         let refs = schema.refs;
         refs.forEach(ref => {
-            let toFieldObj = ref.endpoints[0];
-            let fromFieldObj = ref.endpoints[1];
+            // 關聯方向為： * -> 1
+            const isFrom0To1 = ref.endpoints[0].relation == '*' && ref.endpoints[1].relation == '1';
 
-            if (fromFieldObj.relation == '*' && toFieldObj.relation == '1') {
-                let toFieldName = toFieldObj.tableName + '.' + toFieldObj.fieldNames[0];
-                let fromFieldName = fromFieldObj.tableName + '.' + fromFieldObj.fieldNames[0]
+            const fromFieldObj = isFrom0To1 ? ref.endpoints[0] : ref.endpoints[1];
+            const toFieldObj = isFrom0To1 ? ref.endpoints[1] : ref.endpoints[0];
 
-                if (!refDic[fromFieldName]) {
-                    refDic[fromFieldName] = [];
-                }
-                if (refDic[fromFieldName].indexOf(toFieldName) == -1) {
-                    refDic[fromFieldName].push(toFieldName)
-                }
+            let toFieldName = toFieldObj.tableName + '.' + toFieldObj.fieldNames[0];
+            let fromFieldName = fromFieldObj.tableName + '.' + fromFieldObj.fieldNames[0]
+
+            if (!refDic[fromFieldName]) {
+                refDic[fromFieldName] = [];
+            }
+            if (refDic[fromFieldName].indexOf(toFieldName) == -1) {
+                refDic[fromFieldName].push(toFieldName)
             }
         })
     })
@@ -76,7 +76,7 @@ DBML2Report.prototype.LogRelationships = function () {
 }
 
 // 讀取DBML，轉為匯出xlsx報表
-DBML2Report.prototype.DBML2Xlsx = function (xlsxName) {
+DBML2Report.prototype.DBML2Xlsx = function (xlsxPath) {
     const that = this;
 
     const refDic = that.GetRefDic();
@@ -111,14 +111,14 @@ DBML2Report.prototype.DBML2Xlsx = function (xlsxName) {
                     B: field.type.type_name,
                     C: field.not_null ? 'TRUE' : 'FALSE',
                     D: field.note,
-                    E: fieldSettings.join(', '),
-                    F: toFieldNames.join('\n')
+                    // E: fieldSettings.join(', '),
+                    // F: toFieldNames.join('\n')
                 });
             })
 
             sheets.push(fields);
 
-            // 如有主鍵，新增主鍵索引描述            
+            // 如有主鍵，新增主鍵索引描述
             const pkField = table.fields.find(field => field.pk);
             if (pkField) {
                 fields.push({}); // 新增空列
@@ -137,7 +137,7 @@ DBML2Report.prototype.DBML2Xlsx = function (xlsxName) {
                 });
             }
 
-
+            // 如有外鍵，新增外鍵索引描述
             if (Object.keys(fkSettings).length > 0) {
                 fields.push({}); // 新增空列
                 fields.push({
@@ -162,12 +162,11 @@ DBML2Report.prototype.DBML2Xlsx = function (xlsxName) {
         });
     })
 
-    that.ExportXlsx(sheets, xlsxName);
+    that.ExportXlsx(sheets, xlsxPath);
 }
 
 
-DBML2Report.prototype.ExportXlsx = function (sheets, xlsxName) {
-
+DBML2Report.prototype.ExportXlsx = function (sheets, xlsxPath) {
     const workbook = new ExcelJS.Workbook();
 
     sheets.forEach(fields => {
@@ -187,23 +186,6 @@ DBML2Report.prototype.ExportXlsx = function (sheets, xlsxName) {
             // { key: 'F', width: 50, header: '關聯' },
         ];
         worksheet.addRows(fields);
-
-        // // 加上 border 樣式
-        // for (let row = 1; row <= fields.length; row++) {
-        //     for (let col = 1; col <= worksheet.columns.length; col++) {
-        //         const cell = worksheet.getCell(row, col);
-        //         if (col == 1 && !cell.value) {
-        //             break;
-        //         }
-
-        //         cell.border = {
-        //             top: { style: 'thin' },
-        //             left: { style: 'thin' },
-        //             bottom: { style: 'thin' },
-        //             right: { style: 'thin' },
-        //         };
-        //     }
-        // }
     })
 
     // 設定字體樣式
@@ -230,19 +212,27 @@ DBML2Report.prototype.ExportXlsx = function (sheets, xlsxName) {
                 };
             });
         });
+
+        // 設定寬度
         worksheet.columns = [
             { width: 30 },
             { width: 20 },
-            { width: 20 },
+            { width: 10 },
             { width: 30 },
         ];
     });
 
-
-
     // Save workbook to file
-    workbook.xlsx.writeFile(path.resolve(__dirname, `./../${xlsxName}`))
-        .then(() => console.log(`報表已成功生成到 ${xlsxName} 檔案中。`));
+    workbook.xlsx.writeFile(xlsxPath)
+        .then(() => console.log(`報表已成功生成到 ${xlsxPath} 檔案中。`))
+        .catch(error => {
+            console.error('\n匯出報表失敗！');
+            if (error.code == 'EBUSY') {
+                console.error(`請先關閉檔案 ${xlsxPath}，再進行匯出！`);
+            } else {
+                console.error(error.message);
+            }
+        });
 }
 
 
