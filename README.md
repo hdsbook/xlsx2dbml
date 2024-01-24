@@ -18,17 +18,21 @@ node main.js
 
 ## 設定檔 config.json
 
-- 檔案位置：[./config.json](./config.json)
-- 設定說明：
-    - filterTables 可以篩選只要產出schema.xlsx中哪些table的內容，輸入範例如下：
-        ```json
-        ["COURSE", "COURSE_TYPE"]
-        ```
+> 檔案位置：[./config.json](./config.json)
 
-    - schemaFileName, outputDBMLFileName, outputXlsxFileName: 可客製化輸入輸出檔案的名稱
-    - titleXXX: 可以客製化 schema.xlsx 的標題文字
-    - excelPath, autoOpenReport: 設定excel安裝路逕與是否於報表匯出後自動開啟
+|           設定參數 | 說明                                                                         |
+| -----------------: | ---------------------------------------------------------------------------- |
+|       filterTables | 篩選只要產出哪些table的內容，ex: `["COURSE", "COURSE_TYPE"]`，空陣列為不篩選 |
+|     schemaFileName | 匯入檔名稱，預設值 `schema.xlsx`                                             |
+| outputDBMLFileName | 匯出檔名稱(DBML檔案)，預設值 `schema.dbml`                                   |
+| outputXlsxFileName | 匯出檔名稱(報表)，預設值 `匯出報表.xlsx`                                     |
+|           titleXXX | 可以客製化 schema.xlsx 的標題文字                                            |
+|          excelPath | 設定excel執行檔路逕，有設定且 autoOpenReport 為true，則報表匯出後會自動開啟  |
+|     autoOpenReport | 是否於成功匯出報表後自動開啟報表                                             |
 
+### TIPS: 
+- schema.xlsx 可以放全系統的資料表，用 filterTables 參數篩選要的資料表產DBML
+- 可先設 filterTables 為空陣列，執行後 [./outputFiles/匯出資訊.txt](./outputFiles/匯出資訊.txt) 會有匯出清單，再從清單中擷取要的資料表貼回 filterTables 設定
 
 ## DBDOCS 
 
