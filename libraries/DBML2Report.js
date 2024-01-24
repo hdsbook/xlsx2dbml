@@ -202,18 +202,21 @@ DBML2Report.prototype.ExportXlsx = function (sheets, xlsxPath, callback) {
                 if (colNumber == 1 && cell.value == 'Field Name') {
                     setBold = true;
                 }
+
                 cell.font = {
                     name: '微軟正黑體',
                     size: 8,
                     bold: setBold
                 };
-
-                // 加上 border 樣式
                 cell.border = {
                     top: { style: 'thin' },
                     left: { style: 'thin' },
                     bottom: { style: 'thin' },
                     right: { style: 'thin' },
+                };
+                cell.alignment = {
+                    horizontal: 'left',
+                    vertical: 'top'
                 };
             });
         });
@@ -232,7 +235,7 @@ DBML2Report.prototype.ExportXlsx = function (sheets, xlsxPath, callback) {
         .then(() => {
             console.log(`已匯出報表檔案至: ${xlsxPath}。\n`);
             that.OpenFile(xlsxPath);
-            if (typeof(callback) === 'function') {
+            if (typeof (callback) === 'function') {
                 callback();
             }
         })
