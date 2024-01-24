@@ -199,6 +199,7 @@ DBML2Report.prototype.ExportXlsx = function (sheets, xlsxPath) {
                     setBold = true;
                 }
                 cell.font = {
+                    name: '微軟正黑體',
                     size: 8,
                     bold: setBold
                 };
@@ -224,7 +225,7 @@ DBML2Report.prototype.ExportXlsx = function (sheets, xlsxPath) {
 
     // Save workbook to file
     workbook.xlsx.writeFile(xlsxPath)
-        .then(() => console.log(`報表已成功生成到 ${xlsxPath} 檔案中。`))
+        .then(() => console.log(`已匯出報表檔案至：${xlsxPath}。`))
         .catch(error => {
             console.error('\n匯出報表失敗！');
             if (error.code == 'EBUSY') {

@@ -122,7 +122,7 @@ workbook.xlsx.readFile(inputFilePath).then(() => {
 
     // 寫入檔案 (生成DBML)
     fs.writeFileSync(outputDBMLPath, dbmlProjectInfo + dbmlContent);
-    console.log(`DBML 語法已經成功生成到 ${outputDBMLPath} 檔案中。`);
+    console.log(`已匯出DBML檔案至：${outputDBMLPath}。`);
 
     // 匯出報表 (生成報表)
     const converter = new DBML2Report(outputDBMLPath);
@@ -135,6 +135,7 @@ workbook.xlsx.readFile(inputFilePath).then(() => {
     infoContent += JSON.stringify(tableNames, null, '\t');
     infoContent += "\n\n\n" + chineseTableNames.join('\n');
     fs.writeFileSync(infoFilePath, infoContent, 'utf-8');
+    console.log(`已匯出其它資訊至：${infoFilePath}。`);
 });
 
 
