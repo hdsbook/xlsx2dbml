@@ -13,6 +13,7 @@ const inputFilePath = config['schemaFileName'] || "schema.xlsx";
 const outputDBMLPath = './outputFiles/' + (config['outputDBMLFileName'] || "schema.dbml");
 const outputXlsxPath = './outputFiles/' + (config['outputXlsxFileName'] || "匯出報表.xlsx");
 const infoFilePath = './outputFiles/匯出資訊.txt';
+const dbmlProjectName = 'TEST';
 
 const workbook = new ExcelJS.Workbook();
 workbook.xlsx.readFile(inputFilePath).then(() => {
@@ -83,7 +84,13 @@ workbook.xlsx.readFile(inputFilePath).then(() => {
     });
 
     // 生成 DBML 語法
-    let dbmlContent = '';
+    let dbmlContent = 
+`Project ${dbmlProjectName}{
+    database_type: 'Oracle'
+    Note: '''
+        # TEST Schedule Database
+    '''
+}\n\n`;
     Object.entries(tables).forEach(([tableName, { tableNote, tableColumns }]) => {
         if (tableColumns.length == 0) {
             return;
@@ -112,21 +119,6 @@ workbook.xlsx.readFile(inputFilePath).then(() => {
         dbmlContent += `}\n\n`;
     });
 
-    let dbmlProjectInfo =
-`Project TEST{
-    database_type: 'Oracle'
-    Note: '''
-        # TEST Schedule Database
-    '''
-}\n\n`;
-
-    // 寫入檔案 (生成DBML)
-    fs.writeFileSync(outputDBMLPath, dbmlProjectInfo + dbmlContent);
-    console.log(`已匯出DBML檔案至：${outputDBMLPath}。`);
-
-    // 匯出報表 (生成報表)
-    const converter = new DBML2Report(outputDBMLPath);
-    converter.DBML2Xlsx(outputXlsxPath);
 
     // 匯出資料表清單
     let infoContent = "";
@@ -135,7 +127,19 @@ workbook.xlsx.readFile(inputFilePath).then(() => {
     infoContent += JSON.stringify(tableNames, null, '\t');
     infoContent += "\n\n\n" + chineseTableNames.join('\n');
     fs.writeFileSync(infoFilePath, infoContent, 'utf-8');
-    console.log(`已匯出其它資訊至：${infoFilePath}。`);
+    console.log(`已匯出DB資訊至: ${infoFilePath}。`);
+
+    // 寫入檔案 (生成DBML)
+    fs.writeFileSync(outputDBMLPath, dbmlContent);
+    console.log(`已匯出DBML檔案至: ${outputDBMLPath}。\n`);
+    console.log(`欲建立專案報表網頁，執行: dbdocs build ${outputDBMLPath}`);
+    console.log(`欲設定密碼保護網頁，執行: dbdocs password --set yourpassword --project ${dbmlProjectName}`);
+    console.log(`欲移除專案報表網頁，執行: dbdocs remove ${dbmlProjectName}`);
+    console.log(`詳細 dbdocs 使用說明請參考 ./README2-DBDOCS說明.md\n`);
+
+    // 匯出報表 (生成報表)
+    const converter = new DBML2Report(outputDBMLPath);
+    converter.DBML2Xlsx(outputXlsxPath);
 });
 
 

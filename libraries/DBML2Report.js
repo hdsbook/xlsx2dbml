@@ -225,7 +225,7 @@ DBML2Report.prototype.ExportXlsx = function (sheets, xlsxPath) {
 
     // Save workbook to file
     workbook.xlsx.writeFile(xlsxPath)
-        .then(() => console.log(`已匯出報表檔案至：${xlsxPath}。`))
+        .then(() => console.log(`已匯出報表檔案至: ${xlsxPath}。\n`))
         .catch(error => {
             console.error('\n匯出報表失敗！');
             if (error.code == 'EBUSY') {
