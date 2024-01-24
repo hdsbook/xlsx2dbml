@@ -88,7 +88,7 @@ dbdocs ls
 ### 刪除特定project
 
 ```bash
-# remove Example project
+# remove TEST project
 dbdocs remove TEST
 ```
 
@@ -99,6 +99,20 @@ dbdocs remove TEST
 # 查看指令
 dbml2sql --help
 
-# 將db.dbml轉換為Postgresql的SQL語法
+# 將schema.dbml轉換為Postgresql的SQL語法
 dbml2sql --postgres -o schema.sql schema.dbml
 ```
+
+注意：dbml2sql 只支援：`postgresql`, `mysql`, `mssql`
+
+如果下 
+
+```bash
+dbml2sql --oracle -o schema.sql schema.dbml
+```
+
+會因為沒有對應oracle的支援，而預設使用 postgresql 的格式產出 SQL檔
+
+### 更多詳細內容
+
+請參考 [官方說明文件](https://dbml.dbdiagram.io/home/)
