@@ -25,8 +25,9 @@ node main.js
         ["COURSE", "COURSE_TYPE"]
         ```
 
-    - schemaFileName, outputDBMLFileName, outputXlsxFileName 可客製化輸入輸出檔案的名稱
-    - titleXXX 可以客製化 schema.xlsx 的標題文字
+    - schemaFileName, outputDBMLFileName, outputXlsxFileName: 可客製化輸入輸出檔案的名稱
+    - titleXXX: 可以客製化 schema.xlsx 的標題文字
+    - excelPath, autoOpenReport: 設定excel安裝路逕與是否於報表匯出後自動開啟
 
 
 ## DBDOCS 

@@ -15,6 +15,10 @@ const outputXlsxPath = './outputFiles/' + (config['outputXlsxFileName'] || "匯�
 const infoFilePath = './outputFiles/匯出資訊.txt';
 const dbmlProjectName = 'TEST';
 
+// excel install path
+const excelPath = config['excelPath'];
+const autoOpenReport = config['autoOpenReport'];
+
 const workbook = new ExcelJS.Workbook();
 workbook.xlsx.readFile(inputFilePath).then(() => {
     
@@ -138,8 +142,12 @@ workbook.xlsx.readFile(inputFilePath).then(() => {
     console.log(`詳細 dbdocs 使用說明請參考 ./README2-DBDOCS說明.md\n`);
 
     // 匯出報表 (生成報表)
-    const converter = new DBML2Report(outputDBMLPath);
-    converter.DBML2Xlsx(outputXlsxPath);
+    const reporter = new DBML2Report(outputDBMLPath);
+    reporter.DBML2Xlsx(outputXlsxPath, function() {
+        if (autoOpenReport && excelPath) {
+            reporter.OpenFile(outputXlsxPath, excelPath)
+        }
+    });
 });
 
 

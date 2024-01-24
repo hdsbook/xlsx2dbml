@@ -1,12 +1,14 @@
+const path = require('path');
 const fs = require('fs');
 const { Parser: DBMLParser } = require('@dbml/core');
 const ExcelJS = require('exceljs');
+const { exec } = require('child_process');
 
 
-const DBML2Report = function (filePath) {
+const DBML2Report = function (dbmlFilePath) {
     const that = this;
 
-    const dbmlContent = fs.readFileSync(filePath, 'utf-8');
+    const dbmlContent = fs.readFileSync(dbmlFilePath, 'utf-8');
     try {
         that.database = (new DBMLParser()).parse(dbmlContent, 'dbml');
     } catch (error) {
@@ -15,7 +17,7 @@ const DBML2Report = function (filePath) {
         const errorLines = lines.slice(start.line - 1, end.line);
 
         console.error('DBML parse error:');
-        console.error(`錯誤檔案：${filePath}:`);
+        console.error(`錯誤檔案：${dbmlFilePath}:`);
         console.error(`錯誤行數：${start.line}:`);
         console.error(errorLines.join('\n') + '\n');
         console.error(`錯誤訊息：${error.message}`);
@@ -76,7 +78,7 @@ DBML2Report.prototype.LogRelationships = function () {
 }
 
 // 讀取DBML，轉為匯出xlsx報表
-DBML2Report.prototype.DBML2Xlsx = function (xlsxPath) {
+DBML2Report.prototype.DBML2Xlsx = function (xlsxPath, callback) {
     const that = this;
 
     const refDic = that.GetRefDic();
@@ -162,11 +164,13 @@ DBML2Report.prototype.DBML2Xlsx = function (xlsxPath) {
         });
     })
 
-    that.ExportXlsx(sheets, xlsxPath);
+    that.ExportXlsx(sheets, xlsxPath, callback);
 }
 
 
-DBML2Report.prototype.ExportXlsx = function (sheets, xlsxPath) {
+DBML2Report.prototype.ExportXlsx = function (sheets, xlsxPath, callback) {
+    const that = this;
+
     const workbook = new ExcelJS.Workbook();
 
     sheets.forEach(fields => {
@@ -225,7 +229,13 @@ DBML2Report.prototype.ExportXlsx = function (sheets, xlsxPath) {
 
     // Save workbook to file
     workbook.xlsx.writeFile(xlsxPath)
-        .then(() => console.log(`已匯出報表檔案至: ${xlsxPath}。\n`))
+        .then(() => {
+            console.log(`已匯出報表檔案至: ${xlsxPath}。\n`);
+            that.OpenFile(xlsxPath);
+            if (typeof(callback) === 'function') {
+                callback();
+            }
+        })
         .catch(error => {
             console.error('\n匯出報表失敗！');
             if (error.code == 'EBUSY') {
@@ -234,6 +244,21 @@ DBML2Report.prototype.ExportXlsx = function (sheets, xlsxPath) {
                 console.error(error.message);
             }
         });
+}
+
+DBML2Report.prototype.OpenFile = function (filePath, excelPath) {
+
+    if (excelPath) {
+        const command = `"${excelPath}" "${path.resolve(filePath)}"`;
+
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`自動開啟報表失敗: ${error.message}`);
+                return;
+            }
+            console.log(`將為您開啟 ${filePath}`);
+        });
+    }
 }
 
 

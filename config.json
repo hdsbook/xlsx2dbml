@@ -15,5 +15,8 @@
     "titleNotNull": "非NULL",
     "titleDefault": "預設值",
     "titleUnique": "Unique",
-    "titleReference": "Reference"
+    "titleReference": "Reference",
+
+    "excelPath": "",
+    "autoOpenReport": true
 }
