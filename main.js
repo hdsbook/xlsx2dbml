@@ -16,6 +16,16 @@ const main = function (configFileName) {
     const reportPath = './outputFiles/' + (config.outputXlsxFileName || "匯出報表.xlsx");
     const infoPath = './outputFiles/匯出資訊.txt';
     const dbmlProjectName = config.dbmlProjectName || 'TEST';
+    const reportStyle = config.reportStyle || {
+        "fontSize": 12,
+        "fontName": "微軟正黑體",
+        "columnWidth": {
+            "A": 30,
+            "B": 20,
+            "C": 10,
+            "D": 30
+        }
+    };
 
     // excel install path
     const excelPath = config.excelPath;
@@ -40,7 +50,7 @@ const main = function (configFileName) {
 
         // 匯出報表
         const reporter = new DBMLReporter(dbmlPath);
-        reporter.ExportReport(reportPath)
+        reporter.ExportReport(reportPath, reportStyle)
             .then(() => {
                 console.log(`已匯出報表至: ${reportPath}`);
                 if (autoOpenReport && excelPath) {

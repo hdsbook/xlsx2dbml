@@ -21,6 +21,17 @@
         "reference": "Reference"
     },
 
+    "reportStyle": {
+        "fontSize": 12,
+        "fontName": "微軟正黑體",
+        "columnWidth": {
+            "A": 30,
+            "B": 20,
+            "C": 10,
+            "D": 30
+        }
+    },
+
     "excelPath": "",
     "autoOpenReport": true
 }

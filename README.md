@@ -27,6 +27,7 @@ node main.js
 | outputDBMLFileName | 匯出檔名稱(DBML檔案)，預設值 `schema.dbml`                                   |
 | outputXlsxFileName | 匯出檔名稱(報表)，預設值 `匯出報表.xlsx`                                     |
 |       schemaTitles | 可以客製化 schema.xlsx 的標題文字                                            |
+|        reportStyle | 可以客製化 schema.xlsx 的匯出樣式                                            |
 |          excelPath | 設定excel執行檔路逕，有設定且 autoOpenReport 為true，則報表匯出後會自動開啟  |
 |     autoOpenReport | 是否於成功匯出報表後自動開啟報表                                             |
 

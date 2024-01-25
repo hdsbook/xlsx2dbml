@@ -185,7 +185,7 @@ DBMLReporter.prototype.GenerateReportSheetsData = function () {
 }
 
 // 匯出xlsx報表
-DBMLReporter.prototype.ExportReport = function (xlsxPath, callback) {
+DBMLReporter.prototype.ExportReport = function (xlsxPath, reportStyle) {
     const that = this;
 
     const sheets = that.GenerateReportSheetsData()
@@ -201,10 +201,10 @@ DBMLReporter.prototype.ExportReport = function (xlsxPath, callback) {
 
         // Define headers
         worksheet.columns = [
-            { key: 'A', width: 30, header: 'Field Name' },
-            { key: 'B', width: 20, header: 'Data Type' },
-            { key: 'C', width: 10, header: 'Mandatory' },
-            { key: 'D', width: 30, header: 'Description' },
+            { key: 'A', width: reportStyle.columnWidth.A, header: 'Field Name' },
+            { key: 'B', width: reportStyle.columnWidth.B, header: 'Data Type' },
+            { key: 'C', width: reportStyle.columnWidth.C, header: 'Mandatory' },
+            { key: 'D', width: reportStyle.columnWidth.D, header: 'Description' },
             // { key: 'E', width: 15, header: '設定' },
             // { key: 'F', width: 50, header: '關聯' },
         ];
@@ -223,8 +223,8 @@ DBMLReporter.prototype.ExportReport = function (xlsxPath, callback) {
                 }
 
                 cell.font = {
-                    name: '微軟正黑體',
-                    size: 8,
+                    name: reportStyle.fontName,
+                    size: reportStyle.fontSize,
                     bold: setBold
                 };
                 cell.border = {
