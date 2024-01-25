@@ -63,7 +63,7 @@ SchemaParser.prototype.RawDataToTables = function (rawDataList) {
             return;
         }
 
-        if (!tables[tableName]) {
+        if (tableName && !tables[tableName]) {
             tables[tableName] = {
                 'tableNote': note,
                 'tableFields': []
