@@ -34,6 +34,7 @@ node main.js
 |     autoOpenReport | 是否於成功匯出報表後自動開啟報表                                             |
 
 ## Tips 
+- schema.xlsx 的欄位格式順序不一定要和範本一樣，只要設定好 schemaTitles 即可
 - schema.xlsx 可以放全系統的資料表，用 filterTables 參數篩選要的資料表產DBML
 - 可先設 filterTables 為空陣列，執行後 [./outputFiles/匯出資訊.txt](./outputFiles/匯出資訊.txt) 會有匯出清單，再從清單中擷取要的資料表貼回 filterTables 設定
 - 若資料夾中有兩個以上的config (如：`config.json`, `config_2.json`, `config_xxx.json`)，則執行時可以選擇要用哪個設定檔匯出
