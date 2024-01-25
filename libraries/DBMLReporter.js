@@ -14,11 +14,11 @@ const DBMLReporter = function (dbmlFilePath) {
         // 讀取並解析DBML檔案為database物件
         that.database = (new DBMLParser()).parse(dbmlContent, 'dbml');
     } catch (error) {
-        that.HandleParseError(error);
+        that.HandleParseError(error, dbmlFilePath, dbmlContent);
     }
 }
 
-DBMLReporter.prototype.HandleParseError = function (error) {
+DBMLReporter.prototype.HandleParseError = function (error, dbmlFilePath, dbmlContent) {
     const { start, end } = error.location;
     const lines = dbmlContent.split('\n');
     const errorLines = lines.slice(start.line - 1, end.line);
