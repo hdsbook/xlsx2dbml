@@ -96,10 +96,15 @@ DBMLReporter.prototype.GenerateReportSheetsData = function () {
             const fields = [];
             const fkSettings = {};
             
-            // 取得 PK 欄位 (考慮一張表可能會有多PK的情況)
-            const pkKeys = (table.indexes && table.indexes.length > 0)
+            // 取得 PK 欄位 (多主鍵情況)
+            const multiPkIndexes = (table.indexes && table.indexes.length > 0)
                 ? table.indexes.filter(index => index.pk).flatMap(index => index.columns).map(column => column.value)
                 : [];
+
+            // 取得 PK 欄位 (單一主鍵情況)
+            const singlePks = table.fields.filter(field => field.pk).map(column => column.fieldName); 
+            
+            const pkKeys = [...new Set([...singlePks, ...multiPkIndexes])];
 
             table.fields.forEach(field => {
                 //let schema = schema.name;
