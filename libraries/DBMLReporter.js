@@ -28,6 +28,7 @@ DBMLReporter.prototype.HandleParseError = function (error, dbmlFilePath, dbmlCon
     console.error(`錯誤行數：${start.line}:`);
     console.error(errorLines.join('\n') + '\n');
     console.error(`錯誤訊息：${error.message}`);
+    process.exit(0);
 }
 
 // 取得關聯對應 (欄位A -> 欄位B)
@@ -200,9 +201,9 @@ DBMLReporter.prototype.ExportReport = function (xlsxPath, callback) {
 
         // Define headers
         worksheet.columns = [
-            { key: 'A', width: 35, header: 'Field Name' },
+            { key: 'A', width: 30, header: 'Field Name' },
             { key: 'B', width: 20, header: 'Data Type' },
-            { key: 'C', width: 15, header: 'Mandatory' },
+            { key: 'C', width: 10, header: 'Mandatory' },
             { key: 'D', width: 30, header: 'Description' },
             // { key: 'E', width: 15, header: '設定' },
             // { key: 'F', width: 50, header: '關聯' },
@@ -238,14 +239,6 @@ DBMLReporter.prototype.ExportReport = function (xlsxPath, callback) {
                 };
             });
         });
-
-        // 設定寬度
-        worksheet.columns = [
-            { width: 30 },
-            { width: 20 },
-            { width: 10 },
-            { width: 30 },
-        ];
     });
 
     // Save workbook to file
@@ -256,6 +249,7 @@ DBMLReporter.prototype.ExportReport = function (xlsxPath, callback) {
         } else {
             console.error(error.message);
         }
+        process.exit(0);
     });
 }
 

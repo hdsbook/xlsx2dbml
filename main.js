@@ -35,7 +35,7 @@ const main = function (configFileName) {
 
         // 匯出DBML
         const dbmlContent = schema.GetDBMLContent(dbmlProjectName);
-        fs.writeFileSync(dbmlPath, dbmlContent);
+        fs.writeFileSync(dbmlPath, dbmlContent, 'utf-8');
         console.log(`已匯出DBML至: ${dbmlPath}`);
 
         // 匯出報表
@@ -48,6 +48,7 @@ const main = function (configFileName) {
                 }
             })
             .finally(() => {
+                // 如果有全域安裝 dbdocs 工具，提供執行選項
                 command.CheckGlobalInstallation('dbdocs', isInstalled => {
                     if (isInstalled) {
                         command.ChooseDbdocsCommand(dbmlPath, dbmlProjectName);
@@ -57,12 +58,18 @@ const main = function (configFileName) {
     });
 }
 
-// 若有多個設定檔 (config*.js) 可以選擇要以哪個設定檔執行
-const configFileNames = fs.readdirSync(__dirname).filter(file => file.startsWith('config') && file.endsWith('.json'));
-if (configFileNames.length == 0) {
-    console.error('找不到設定檔');
-} else if (configFileNames.length == 1) {
-    main(configFileNames[0]);
-} else {
-    command.ChooseConfig(configFileNames).then(configFileName => main(configFileName));
+
+try {
+    // 若有多個設定檔 (config*.js) 可以選擇要以哪個設定檔執行
+    const configFileNames = fs.readdirSync(__dirname).filter(file => file.startsWith('config') && file.endsWith('.json'));
+    if (configFileNames.length == 0) {
+        console.error('找不到設定檔');
+    } else if (configFileNames.length == 1) {
+        main(configFileNames[0]);
+    } else {
+        command.ChooseConfig(configFileNames).then(configFileName => main(configFileName));
+    }
+} catch (error) {
+    console.error("發生意外的錯誤：" + error.message);
+    process.exit(0);
 }
