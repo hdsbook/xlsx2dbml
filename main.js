@@ -15,6 +15,8 @@ const main = function (configFileName) {
     const dbmlPath = './outputFiles/' + (config.outputDBMLFileName || "schema.dbml");
     const reportPath = './outputFiles/' + (config.outputXlsxFileName || "匯出報表.xlsx");
     const infoPath = './outputFiles/匯出資訊.txt';
+
+    // other configs
     const dbmlProjectName = config.dbmlProjectName || 'TEST';
     const reportStyle = config.reportStyle || {
         "fontSize": 12,
@@ -26,14 +28,13 @@ const main = function (configFileName) {
             "D": 30
         }
     };
-
-    // excel install path
     const excelPath = config.excelPath;
     const autoOpenReport = config.autoOpenReport;
 
     const workbook = new ExcelJS.Workbook();
     workbook.xlsx.readFile(inputFilePath).then(() => {
 
+        // 讀取 schema.xlsx
         const schema = new SchemaParser({ workbook, config });
 
         // 匯出資料表清單
@@ -48,7 +49,7 @@ const main = function (configFileName) {
         fs.writeFileSync(dbmlPath, dbmlContent, 'utf-8');
         console.log(`已匯出DBML至: ${dbmlPath}`);
 
-        // 匯出報表
+        // 讀取schema.dbml，匯出報表
         const reporter = new DBMLReporter(dbmlPath);
         reporter.ExportReport(reportPath, reportStyle)
             .then(() => {

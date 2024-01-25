@@ -12,7 +12,9 @@ node main.js
     - [./outputFiles/匯出報表.xlsx](./outputFiles/匯出報表.xlsx)
     - [./outputFiles/匯出資訊.txt](./outputFiles/匯出資訊.txt)
 
-- DBML檔案的內容可以貼到 https://dbdiagram.io/d 去產關聯圖，或是用 dbdocs 建立靜態報表網頁
+- DBML檔案產關聯圖的方式有兩種，兩種都會需要至 [https://dbdiagram.io/d](https://dbdiagram.io/d) 註冊帳號
+    1. 貼到 [https://dbdiagram.io/d](https://dbdiagram.io/d) 去產關聯圖
+    2. 用 dbdocs 建立靜態報表網頁，詳細說明請閱讀 [README2-DBDOCS說明.md](./README2-DBDOCS說明.md)
 
 
 
@@ -31,14 +33,12 @@ node main.js
 |          excelPath | 設定excel執行檔路逕，有設定且 autoOpenReport 為true，則報表匯出後會自動開啟  |
 |     autoOpenReport | 是否於成功匯出報表後自動開啟報表                                             |
 
-### TIPS: 
+## Tips 
 - schema.xlsx 可以放全系統的資料表，用 filterTables 參數篩選要的資料表產DBML
 - 可先設 filterTables 為空陣列，執行後 [./outputFiles/匯出資訊.txt](./outputFiles/匯出資訊.txt) 會有匯出清單，再從清單中擷取要的資料表貼回 filterTables 設定
 - 若資料夾中有兩個以上的config (如：`config.json`, `config_2.json`, `config_xxx.json`)，則執行時可以選擇要用哪個設定檔匯出
 
-## DBDOCS 
 
-如果要使用dbdocs，可以續繼閱讀 [README2-DBDOCS說明.md](./README2-DBDOCS說明.md)
 
 
 
