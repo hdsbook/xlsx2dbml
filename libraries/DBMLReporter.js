@@ -188,7 +188,11 @@ DBMLReporter.prototype.GenerateReportSheetsData = function () {
 DBMLReporter.prototype.ExportReport = function (xlsxPath, reportStyle) {
     const that = this;
 
-    const sheets = that.GenerateReportSheetsData()
+    const sheets = that.GenerateReportSheetsData();
+    if (sheets.length == 0) {
+        console.error('\n匯出報表失敗，沒有可以匯出的資料！請檢查匯入檔或設定檔內容！\n');
+        process.exit(0);
+    }
 
     const workbook = new ExcelJS.Workbook();
 

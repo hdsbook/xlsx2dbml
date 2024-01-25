@@ -4,34 +4,62 @@
 const SchemaParser = function ({ workbook, config }) {
     const that = this;
 
-    // 初始化 tables 物件
-    that.tables = that.InitTables(workbook, config);
-}
+    that.filterTables = config.filterTables;
+    that.schemaTitles = config.schemaTitles;
+    that.schemaFileName = config.schemaFileName;
+    that.headerNames = {};
 
-SchemaParser.prototype.InitTables = function (workbook, config) {
-    const that = this;
-
-    
-    const {filterTables, schemaTitles} = config;
-
-    // 讀取並解析 Excel 資料
+    // 初始化 rawDataList
     const rawDataList = that.GetRawDataList(workbook);
 
+    // 初始化 tables 物件
+    that.tables = that.RawDataToTables(rawDataList);
+
+    that.LogErrorIfNeeded(rawDataList);
+}
+
+// 取得原始資料清單
+SchemaParser.prototype.GetRawDataList = function (workbook) {
+    const that = this;
+
+    const rawDataList = [];
+    workbook.eachSheet(sheet => {
+        sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+            
+            const rowData = {};
+            row.eachCell({ includeEmpty: false }, (cell, colNumber) => {
+                if (rowNumber == 1) { // 第一列標題
+                    that.headerNames[colNumber] = cell.text.toString().trim();
+                } else {
+                    const headerName = that.headerNames[colNumber];
+                    rowData[headerName] = cell.text.toString().trim();
+                }
+            });
+            rawDataList.push(rowData);
+        });
+    })
+    return rawDataList;
+}
+
+// 轉換原始資料為 tables 物件
+SchemaParser.prototype.RawDataToTables = function (rawDataList) {
+    const that = this;
+
     let tables = {};
-    let hasFilterTables = filterTables.length > 0;
+    let hasFilterTables = that.filterTables.length > 0;
     rawDataList.forEach(row => {
-        const tableName = row[schemaTitles.tableName];
-        const note = row[schemaTitles.chinese] ?? '';
-        const fieldName = row[schemaTitles.english] ?? '';
-        const dataType = row[schemaTitles.dataType] ?? '';
-        const isPK = row[schemaTitles.primaryKey] ?? '';
-        const isNN = row[schemaTitles.notNull] ?? '';
-        const defaultValue = row[schemaTitles.default] ?? '';
-        const isUnique = row[schemaTitles.unique] ?? '';
-        const reference = row[schemaTitles.reference] ?? '';
+        const tableName = row[that.schemaTitles.tableName];
+        const note = row[that.schemaTitles.chinese] ?? '';
+        const fieldName = row[that.schemaTitles.english] ?? '';
+        const dataType = row[that.schemaTitles.dataType] ?? '';
+        const isPK = row[that.schemaTitles.primaryKey] ?? '';
+        const isNN = row[that.schemaTitles.notNull] ?? '';
+        const defaultValue = row[that.schemaTitles.default] ?? '';
+        const isUnique = row[that.schemaTitles.unique] ?? '';
+        const reference = row[that.schemaTitles.reference] ?? '';
 
         // 篩選資料表
-        if (hasFilterTables && filterTables.indexOf(tableName) == -1) {
+        if (hasFilterTables && that.filterTables.indexOf(tableName) == -1) {
             return;
         }
 
@@ -59,24 +87,23 @@ SchemaParser.prototype.InitTables = function (workbook, config) {
     return tables;
 }
 
-SchemaParser.prototype.GetRawDataList = function (workbook) {
-    const rawDataList = [];
-    workbook.eachSheet(sheet => {
-        sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-            if (rowNumber == 1) {
-                return; // 跳過第一列標題
-            }
+// 驗證解析結果是否有異常之處，如果有的話，給予警示方便發現錯誤
+SchemaParser.prototype.LogErrorIfNeeded = function () {
+    const that = this;
 
-            const rowData = {};
-            row.eachCell({ includeEmpty: false }, (cell, colNumber) => {
-                const headerCell = sheet.getCell(1, colNumber);
-                const headerName = headerCell.value;
-                rowData[headerName] = cell.text.toString().trim();
-            });
-            rawDataList.push(rowData);
-        });
-    })
-    return rawDataList;
+    const hasNoTables = that.GetTableNames().length == 0;
+    const hasNoFields = that.GetAllFields().length == 0;
+    const isAbnormal = hasNoTables || hasNoFields;
+
+    if (isAbnormal) {
+        const configHeaders = Object.values(that.schemaTitles);
+        const fileHeaders = Object.values(that.headerNames);
+        const notExistHeaders = configHeaders.filter(name => !fileHeaders.includes(name));
+        
+        if (notExistHeaders.length > 0) {
+            console.error(`\n警告！設定檔中 schemaTitles 包含不存在於檔案(${that.schemaFileName})的標題：${notExistHeaders.join(', ')}\n`);
+        }
+    }
 }
 
 SchemaParser.prototype.GetTableNames = function () {
