@@ -1,8 +1,8 @@
 Project TEST{
-    database_type: 'Oracle'
-    Note: '''
-        # TEST Schedule Database
-    '''
+database_type: 'Oracle'
+Note: '''
+    # TEST Schedule Database
+'''
 }
 
 Table COURSE [note: '課程'] {

@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@dbml/core": "^3.1.1",
-    "exceljs": "^4.4.0"
+    "exceljs": "^4.4.0",
+    "inquirer": "^8.0.0"
   }
 }

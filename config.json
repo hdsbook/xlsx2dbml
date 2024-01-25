@@ -7,15 +7,19 @@
     "outputDBMLFileName": "schema.dbml",
     "outputXlsxFileName": "匯出報表.xlsx",
 
-    "titleTableName": "Table 名稱",
-    "titleChinese": "中文欄位名稱",
-    "titleEnglish": "英文欄位名稱",
-    "titleDataType": "資料型態",
-    "titlePrimaryKey": "Primary Key",
-    "titleNotNull": "非NULL",
-    "titleDefault": "預設值",
-    "titleUnique": "Unique",
-    "titleReference": "Reference",
+    "dbmlProjectName": "TEST",
+
+    "schemaTitles": {
+        "tableName": "Table 名稱",
+        "chinese": "中文欄位名稱",
+        "english": "英文欄位名稱",
+        "dataType": "資料型態",
+        "primaryKey": "Primary Key",
+        "notNull": "非NULL",
+        "default": "預設值",
+        "unique": "Unique",
+        "reference": "Reference"
+    },
 
     "excelPath": "",
     "autoOpenReport": true

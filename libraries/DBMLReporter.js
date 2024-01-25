@@ -1,31 +1,37 @@
-const path = require('path');
 const fs = require('fs');
 const { Parser: DBMLParser } = require('@dbml/core');
 const ExcelJS = require('exceljs');
-const { exec } = require('child_process');
 
 
-const DBML2Report = function (dbmlFilePath) {
+/**
+ * 報表物件 (解析schema.dbml，產生報表)
+ */
+const DBMLReporter = function (dbmlFilePath) {
     const that = this;
 
     const dbmlContent = fs.readFileSync(dbmlFilePath, 'utf-8');
     try {
+        // 讀取並解析DBML檔案為database物件
         that.database = (new DBMLParser()).parse(dbmlContent, 'dbml');
     } catch (error) {
-        const { start, end } = error.location;
-        const lines = dbmlContent.split('\n');
-        const errorLines = lines.slice(start.line - 1, end.line);
-
-        console.error('DBML parse error:');
-        console.error(`錯誤檔案：${dbmlFilePath}:`);
-        console.error(`錯誤行數：${start.line}:`);
-        console.error(errorLines.join('\n') + '\n');
-        console.error(`錯誤訊息：${error.message}`);
+        that.HandleParseError(error);
     }
 }
 
+DBMLReporter.prototype.HandleParseError = function (error) {
+    const { start, end } = error.location;
+    const lines = dbmlContent.split('\n');
+    const errorLines = lines.slice(start.line - 1, end.line);
+
+    console.error('DBML parse error:');
+    console.error(`錯誤檔案：${dbmlFilePath}:`);
+    console.error(`錯誤行數：${start.line}:`);
+    console.error(errorLines.join('\n') + '\n');
+    console.error(`錯誤訊息：${error.message}`);
+}
+
 // 取得關聯對應 (欄位A -> 欄位B)
-DBML2Report.prototype.GetRefDic = function () {
+DBMLReporter.prototype.GetRefDic = function () {
     const that = this;
 
     let refDic = {};
@@ -53,7 +59,7 @@ DBML2Report.prototype.GetRefDic = function () {
 }
 
 // 將資料表關聯log出來
-DBML2Report.prototype.LogRelationships = function () {
+DBMLReporter.prototype.LogReferences = function () {
     const that = this;
 
     that.database.schemas.every(schema => {
@@ -77,8 +83,8 @@ DBML2Report.prototype.LogRelationships = function () {
     })
 }
 
-// 讀取DBML，轉為匯出xlsx報表
-DBML2Report.prototype.DBML2Xlsx = function (xlsxPath, callback) {
+// 產生報表資料 (多個sheet，每個sheet是一張表)
+DBMLReporter.prototype.GenerateReportSheetsData = function () {
     const that = this;
 
     const refDic = that.GetRefDic();
@@ -164,12 +170,14 @@ DBML2Report.prototype.DBML2Xlsx = function (xlsxPath, callback) {
         });
     })
 
-    that.ExportXlsx(sheets, xlsxPath, callback);
+    return sheets;
 }
 
-
-DBML2Report.prototype.ExportXlsx = function (sheets, xlsxPath, callback) {
+// 匯出xlsx報表
+DBMLReporter.prototype.ExportReport = function (xlsxPath, callback) {
     const that = this;
+
+    const sheets = that.GenerateReportSheetsData()
 
     const workbook = new ExcelJS.Workbook();
 
@@ -231,39 +239,16 @@ DBML2Report.prototype.ExportXlsx = function (sheets, xlsxPath, callback) {
     });
 
     // Save workbook to file
-    workbook.xlsx.writeFile(xlsxPath)
-        .then(() => {
-            console.log(`已匯出報表檔案至: ${xlsxPath}。\n`);
-            that.OpenFile(xlsxPath);
-            if (typeof (callback) === 'function') {
-                callback();
-            }
-        })
-        .catch(error => {
-            console.error('\n匯出報表失敗！');
-            if (error.code == 'EBUSY') {
-                console.error(`請先關閉檔案 ${xlsxPath}，再進行匯出！`);
-            } else {
-                console.error(error.message);
-            }
-        });
-}
-
-DBML2Report.prototype.OpenFile = function (filePath, excelPath) {
-
-    if (excelPath) {
-        const command = `"${excelPath}" "${path.resolve(filePath)}"`;
-
-        exec(command, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`自動開啟報表失敗: ${error.message}`);
-                return;
-            }
-            console.log(`將為您開啟 ${filePath}`);
-        });
-    }
+    return workbook.xlsx.writeFile(xlsxPath).catch(error => {
+        console.error('\n匯出報表失敗！');
+        if (error.code == 'EBUSY') {
+            console.error(`請先關閉檔案 ${xlsxPath}，再進行匯出！`);
+        } else {
+            console.error(error.message);
+        }
+    });
 }
 
 
 
-module.exports = { DBML2Report };
+module.exports = DBMLReporter;
