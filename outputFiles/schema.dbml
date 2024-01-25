@@ -8,13 +8,15 @@ Note: '''
 Table COURSE [note: '課程'] {
 	COURSE_ID         NUMBER(20)         [pk, not null, note: '主檔流水號']
 	COURSE_NAME       VARCHAR2 (16 CHAR) [not null, note: '課程名稱']
-	COURSE_TYPE_ID    NUMBER(20)         [not null, note: '關聯到：課程類型', ref: > COURSE_TYPE.COURSE_TYPE_ID]
+	COURSE_TYPE       NUMBER(20)         [not null, note: '關聯到：課程類型', ref: > TYPE.TYPE]
+	COURSE_TYPE_CODE  NUMBER(20)         [not null, note: '關聯到：課程類型', ref: > TYPE.TYPE_CODE]
 	CREATE_TIME       DATE               [not null, note: '建立時間']
 }
 
-Table COURSE_TYPE [note: '課程類型'] {
-	COURSE_TYPE_ID    NUMBER(20)         [pk, not null, note: '主檔流水號']
-	COURSE_TYPE_NAME  VARCHAR2 (16 CHAR) [not null, note: '課程類型名稱']
+Table TYPE [note: '類型'] {
+	TYPE              NUMBER(20)         [pk, not null, note: '類型']
+	TYPE_CODE         VARCHAR2 (16 CHAR) [pk, not null, note: '類型代碼']
+	TYPE_NAME         VARCHAR2 (16 CHAR) [not null, note: '類型名稱']
 	CREATE_TIME       DATE               [not null, note: '建立時間']
 }
 

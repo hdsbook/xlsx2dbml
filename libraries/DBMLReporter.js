@@ -95,11 +95,16 @@ DBMLReporter.prototype.GenerateReportSheetsData = function () {
         tables.forEach(table => {
             const fields = [];
             const fkSettings = {};
+            
+            // 取得 PK 欄位 (考慮一張表可能會有多PK的情況)
+            const pkKeys = (table.indexes && table.indexes.length > 0)
+                ? table.indexes.filter(index => index.pk).flatMap(index => index.columns).map(column => column.value)
+                : [];
 
             table.fields.forEach(field => {
                 //let schema = schema.name;
                 let fieldSettings = [];
-                if (field.pk) fieldSettings.push('PK');
+                if (pkKeys.indexOf(field.fieldName) != -1) fieldSettings.push('PK');
                 if (field.not_null) fieldSettings.push('NN');
 
                 let fromFieldName = table.name + '.' + field.name;
@@ -127,8 +132,7 @@ DBMLReporter.prototype.GenerateReportSheetsData = function () {
             sheets.push(fields);
 
             // 如有主鍵，新增主鍵索引描述
-            const pkField = table.fields.find(field => field.pk);
-            if (pkField) {
+            if (pkKeys.length > 0) {
                 fields.push({}); // 新增空列
 
                 fields.push({
@@ -137,10 +141,11 @@ DBMLReporter.prototype.GenerateReportSheetsData = function () {
                     C: "Used columns",
                     D: "Index expression"
                 });
+                const pkUsedColumns = pkKeys.map(pkFieldName => `${table.name}.${pkFieldName}`).join(', ')
                 fields.push({
                     A: `${table.name}_PK`,
                     B: "Primary Constraint",
-                    C: `${table.name}.${pkField.name}`,
+                    C: pkUsedColumns,
                     D: ""
                 });
             }
