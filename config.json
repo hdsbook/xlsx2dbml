@@ -22,13 +22,14 @@
     },
 
     "reportStyle": {
-        "fontSize": 10,
+        "fontSize": 12,
         "fontName": "微軟正黑體",
+        "englishFontName": "Arial",
         "columnWidth": {
-            "A": 30,
-            "B": 20,
-            "C": 10,
-            "D": 30
+            "A": 22,
+            "B": 22,
+            "C": 22,
+            "D": 22
         }
     },
 

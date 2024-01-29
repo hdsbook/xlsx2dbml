@@ -21,6 +21,7 @@ const main = function (configFileName) {
     const reportStyle = config.reportStyle || {
         "fontSize": 12,
         "fontName": "微軟正黑體",
+        "englishFontName": "Arial",
         "columnWidth": {
             "A": 30,
             "B": 20,

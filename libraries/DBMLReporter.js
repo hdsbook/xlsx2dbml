@@ -96,14 +96,14 @@ DBMLReporter.prototype.GenerateReportSheetsData = function () {
         tables.forEach(table => {
             const fields = [];
             const fkSettings = {};
-            
+
             // 取得 PK 欄位 (多主鍵情況)
             const pkIndexes = (table.indexes && table.indexes.length > 0)
                 ? table.indexes.filter(index => index.pk).flatMap(index => index.columns).map(column => column.value)
                 : [];
 
             // 取得 PK 欄位 (單一主鍵情況)
-            const otherPks = table.fields.filter(field => field.pk).map(column => column.name); 
+            const otherPks = table.fields.filter(field => field.pk).map(column => column.name);
 
             const pkKeys = [...new Set([...otherPks, ...pkIndexes])];
 
@@ -226,8 +226,12 @@ DBMLReporter.prototype.ExportReport = function (xlsxPath, reportStyle) {
                     setBold = true;
                 }
 
+                const fontName = /[\u4e00-\u9fa5]/.test(cell.text)
+                    ? (reportStyle.fontName ?? '微軟正黑體') 
+                    : (reportStyle.englishFontName ?? 'Arial');
+
                 cell.font = {
-                    name: reportStyle.fontName,
+                    name: fontName,
                     size: reportStyle.fontSize,
                     bold: setBold
                 };
