@@ -5,4 +5,5 @@ node_modules/
 config_*.json
 schema_*.xlsx
 outputFiles/~$*.xlsx
-~$*.xlsx
+*~$*.xlsx
+schemas/*
