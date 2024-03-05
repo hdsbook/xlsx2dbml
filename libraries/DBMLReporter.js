@@ -196,10 +196,11 @@ DBMLReporter.prototype.ExportReport = function (xlsxPath, reportStyle) {
 
     const workbook = new ExcelJS.Workbook();
 
+    let index = 1;
     sheets.forEach(fields => {
-        let sheetName = fields[0].tableNote;
-        if (sheetName.length > 27) {
-            sheetName = sheetName.substring(0, 27) + '...';
+        let sheetName = (index++) + '.' + fields[0].tableNote;
+        if (sheetName.length > 25) {
+            sheetName = sheetName.substring(0, 25) + '...';
         }
         const worksheet = workbook.addWorksheet(sheetName);
 
