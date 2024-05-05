@@ -1,27 +1,60 @@
+const ExcelJS = require('exceljs');
+
 /**
- * schema.xlsx 解析物件
+ * 解析 schema.xlsx 或 GoogleSheet
+ * 轉成統一原始資料格式 [{標題: 值}, {標題: 值}, ...]
+ * 再轉成tables物件 [
+ *  {tableName: {tableNote: 資料表註解, tableFields: [{fieldName, dataType, note, isPK, isNN, defaultValue, isUnique, reference}, ...]}}, ...
+ * ]
  */
-const SchemaParser = function ({ workbook, config }) {
+const SchemaParser = function (filterTables, schemaTitles) {
     const that = this;
 
-    that.filterTables = config.filterTables;
-    that.schemaTitles = config.schemaTitles;
-    that.schemaFileName = config.schemaFileName;
+    that.filterTables = filterTables;
+    that.schemaTitles = schemaTitles;
     that.headerNames = {};
+    that.rawDataList = [];
+}
 
-    // 初始化 rawDataList
-    const rawDataList = that.GetRawDataList(workbook);
+SchemaParser.prototype.SetRawDataList = function (rawDataList) {
+    const that = this;
 
+    that.rawDataList = rawDataList;
+    
     // 初始化 tables 物件
     that.tables = that.RawDataToTables(rawDataList);
-
+    
+    // 檢查若有異常，顯示Log
     that.LogErrorIfNeeded(rawDataList);
 }
 
-// 取得原始資料清單
-SchemaParser.prototype.GetRawDataList = function (workbook) {
+SchemaParser.prototype.SetDataByGoogleSheetReader = async function (googleSheetReader, googleSheetName) {
     const that = this;
 
+    // 從GoogleSheet讀取資料
+    sheetRows = await googleSheetReader.GetSheetRows(googleSheetName);
+
+    // 轉換為原始資料清單 [{標題: 值}, {標題: 值}, ...]
+    const rawDataList = [];
+    sheetRows.forEach(row => {
+        const rawData = {};
+        row.forEach(cell => {
+            const {title, value} = cell;
+            rawData[title] = value;
+        })
+        rawDataList.push(rawData);
+    });
+    that.SetRawDataList(rawDataList);
+}
+
+SchemaParser.prototype.SetDataByFile = async function (inputFilePath) {
+    const that = this;
+    
+    // 從本機端檔案讀取資料
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(inputFilePath);
+
+    // 轉換成原始資料清單 [{標題: 值}, {標題: 值}, ...]
     const rawDataList = [];
     workbook.eachSheet(sheet => {
         sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
@@ -38,7 +71,7 @@ SchemaParser.prototype.GetRawDataList = function (workbook) {
             rawDataList.push(rowData);
         });
     })
-    return rawDataList;
+    that.SetRawDataList(rawDataList);
 }
 
 // 轉換原始資料為 tables 物件
@@ -101,7 +134,7 @@ SchemaParser.prototype.LogErrorIfNeeded = function () {
         const notExistHeaders = configHeaders.filter(name => !fileHeaders.includes(name));
         
         if (notExistHeaders.length > 0) {
-            console.error(`\n警告！設定檔中 schemaTitles 包含不存在於檔案(${that.schemaFileName})的標題：${notExistHeaders.join(', ')}\n`);
+            console.error(`\n警告！設定檔中 schemaTitles 包含不存在於資料來源檔案的標題：${notExistHeaders.join(', ')}\n`);
         }
     }
 }

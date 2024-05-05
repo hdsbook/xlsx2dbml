@@ -18,7 +18,7 @@
             "request": "launch",
             "name": "Launch Program By Terminal",
             "console": "integratedTerminal",
-            "program": "${workspaceFolder}\\main.js"
+            "program": "${workspaceFolder}\\main2.js"
         }
     ]
 }

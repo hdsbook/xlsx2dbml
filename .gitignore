@@ -7,3 +7,5 @@ schema_*.xlsx
 outputFiles/~$*.xlsx
 *~$*.xlsx
 schemas/*
+
+googleCredential.json
