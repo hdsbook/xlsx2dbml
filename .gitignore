@@ -2,10 +2,12 @@ node_modules/
 .DS_Store
 .env
 
+schemas/*
 config_*.json
 schema_*.xlsx
+schema_*.dbml
+
 outputFiles/~$*.xlsx
 *~$*.xlsx
-schemas/*
 
 googleCredential.json

@@ -1,12 +1,12 @@
 {
-    "readFromGoogle": false,
-    "inputFilePath": "schema.xlsx",
-    "googleSheetName": "",
-    "googleSpreadSheetId": "",
-
     "filterTables": [
         
     ],
+    
+    "readFromGoogle": false,
+    "googleSheetName": "",
+    "googleSpreadSheetId": "",
+    "inputFilePath": "schema.xlsx",
 
     "outputDBMLFileName": "schema.dbml",
     "outputXlsxFileName": "匯出報表.xlsx",

@@ -24,17 +24,19 @@ const main = async function (configFileName) {
             "D": 30
         }
     };
-    
+
     // 讀取設定：是否於匯出後自動開啟報表檔案
     const autoOpenReport = config.autoOpenReport;                                     // 是否於匯出後自動開啟excel
     const excelPath = config.excelPath;                                               // excel應用程式安裝位置
-    
+
     // 讀取設定：從檔案or從google讀取資料
     const readFromGoogle = config.readFromGoogle;                                     // 是否從google讀取schema
     const inputFilePath = config.inputFilePath || "schema.xlsx";                      // 從檔案讀取：匯入檔 路逕
     const googleSpreadSheetId = config.googleSpreadSheetId;                           // 從google讀取：google excel 文件id
     const googleSheetName = config.googleSheetName;                                   // 從google讀取：google excel 要讀取的工作表名稱
-    const googleCredential = JSON.parse(fs.readFileSync('googleCredential.json'));    // 從google讀取：google api credential
+    const googleCredential = config.readFromGoogle ?                                  // 從google讀取：google api credential
+        JSON.parse(fs.readFileSync('googleCredential.json')) :
+        {};
 
 
 
@@ -80,7 +82,7 @@ try {
             console.error('找不到設定檔');
             break;
         case 1:  // 只有一個設定檔
-            main(configFileNames[0]); 
+            main(configFileNames[0]);
             break;
         default: // 有多個設定檔，可以選擇要以哪個設定檔執行
             command.ChooseConfig(configFileNames).then(configFileName => main(configFileName));
