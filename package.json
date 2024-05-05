@@ -2,6 +2,7 @@
   "dependencies": {
     "@dbml/core": "^3.1.1",
     "exceljs": "^4.4.0",
+    "googleapis": "^136.0.0",
     "inquirer": "^8.0.0"
   }
 }
