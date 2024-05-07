@@ -22,16 +22,19 @@ node main.js
 
 > 檔案位置：[./config.json](./config.json)
 
-|           設定參數 | 說明                                                                         |
-| -----------------: | ---------------------------------------------------------------------------- |
-|       filterTables | 篩選只要產出哪些table的內容，ex: `["COURSE", "COURSE_TYPE"]`，空陣列為不篩選 |
-|     schemaFileName | 匯入檔名稱，預設值 `schema.xlsx`                                             |
-| outputDBMLFileName | 匯出檔名稱(DBML檔案)，預設值 `schema.dbml`                                   |
-| outputXlsxFileName | 匯出檔名稱(報表)，預設值 `匯出報表.xlsx`                                     |
-|       schemaTitles | 可以客製化 schema.xlsx 的標題文字                                            |
-|        reportStyle | 可以客製化 schema.xlsx 的匯出樣式                                            |
-|          excelPath | 設定excel執行檔路逕，有設定且 autoOpenReport 為true，則報表匯出後會自動開啟  |
-|     autoOpenReport | 是否於成功匯出報表後自動開啟報表                                             |
+|            設定參數 | 說明                                                                            |
+| ------------------: | ------------------------------------------------------------------------------- |
+|        filterTables | 篩選只要產出哪些table的內容，ex: `["COURSE", "COURSE_TYPE"]`，空陣列為不篩選    |
+|      readFromGoogle | 是否從google sheet讀取，true則從google sheet讀取，false則從檔案讀取             |
+| googleSpreadSheetId | (readFromGoogle = true) google 工作表ID                                         |
+|     googleSheetName | (readFromGoogle = true) google 工作表名稱                                       |
+|       inputFilePath | (readFromGoogle = false) 匯入檔路逕，預設值 `schema.xlsx`                       |
+|  outputDBMLFileName | 匯出檔名稱(DBML檔案)，預設值 `schema.dbml`                                      |
+|  outputXlsxFileName | 匯出檔名稱(報表)，預設值 `匯出報表.xlsx`                                        |
+|        schemaTitles | 可以客製化 輸入資料 的標題文字                                                  |
+|         reportStyle | 可以客製化 報表 的匯出樣式                                                      |
+|      autoOpenReport | 是否於成功匯出報表後自動開啟報表                                                |
+|           excelPath | 設定excel執行檔路逕，此設定有值且 autoOpenReport = true，則報表匯出後會自動開啟 |
 
 ## Tips 
 - schema.xlsx 的欄位格式順序不一定要和範本一樣，只要設定好 schemaTitles 即可
