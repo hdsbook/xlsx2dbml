@@ -7,6 +7,9 @@ config_*.json
 schema_*.xlsx
 schema_*.dbml
 
+outputFiles/*.dbml
+outputFiles/*.xlsx
+outputFiles/*.txt
 outputFiles/~$*.xlsx
 *~$*.xlsx
 
