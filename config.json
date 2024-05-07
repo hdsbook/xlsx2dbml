@@ -22,7 +22,8 @@
         "notNull": "非NULL",
         "default": "預設值",
         "unique": "Unique",
-        "reference": "Reference"
+        "reference": "Reference",
+        "ignore": "忽略"
     },
 
     "reportStyle": {

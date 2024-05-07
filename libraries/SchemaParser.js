@@ -90,6 +90,11 @@ SchemaParser.prototype.RawDataToTables = function (rawDataList) {
         const defaultValue = row[that.schemaTitles.default] ?? '';
         const isUnique = row[that.schemaTitles.unique] ?? '';
         const reference = row[that.schemaTitles.reference] ?? '';
+        const ignore = row[that.schemaTitles.ignore] ?? '';
+
+        if (ignore) {
+            return; // 忽略的資料列
+        }
 
         // 篩選資料表
         if (hasFilterTables && that.filterTables.indexOf(tableName) == -1) {
