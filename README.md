@@ -8,13 +8,14 @@ node main.js
 ## 功能說明
 
 - 執行後，程式會讀取schema.xlsx，產生三個檔案：
-    - ./outputFiles/schema.dbml: DBML檔案
-    - ./outputFiles/匯出報表.xlsx: 報表檔案
-    - ./outputFiles/匯出資訊.txt: 紀錄此次匯出共匯出了哪些資料表
 
-- DBML檔案產關聯圖的方式有兩種，兩種都會需要至 [https://dbdiagram.io/d](https://dbdiagram.io/d) 註冊帳號
-    1. 貼到 [https://dbdiagram.io/d](https://dbdiagram.io/d) 去產關聯圖
-    2. 用 dbdocs 建立靜態報表網頁，詳細說明請閱讀 [README2-DBDOCS說明.md](./README2-DBDOCS說明.md)
+| 匯出檔案                    | 說明                                                                                                                                          |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| ./outputFiles/schema.dbml   | DBML檔案，可用[dbdocs](https://dbdocs.io/)/[dbdiagram](https://dbdiagram.io/d)產生ERD，或用[dbml2sql](https://dbml.dbdiagram.io/cli)轉成SQL檔 |
+| ./outputFiles/匯出報表.xlsx | 報表檔案                                                                                                                                      |
+| ./outputFiles/匯出資訊.txt  | 紀錄此次匯出共匯出了哪些資料表                                                                                                                |
+
+- 關於用dbdocs建立靜態報表網頁，詳細說明請閱讀 [README2-DBDOCS說明.md](./README2-DBDOCS說明.md)
 
 
 
