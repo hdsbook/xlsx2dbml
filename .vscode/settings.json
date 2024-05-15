@@ -1,7 +1,6 @@
 {
     "files.exclude": {
         // 取消註解以下設定，可以隱藏Sidebar中的檔案，專注在：config*.json、schemas、outputFiles
-
         // "node_modules": true,
         // "package-lock.json": true,
         // "package.json": true,
@@ -12,5 +11,6 @@
         // "schema.xlsx": true,
         
         // "README*.md": true,
+        // ".ignore": true
     }
 }
