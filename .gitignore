@@ -3,14 +3,9 @@ node_modules/
 .env
 
 schemas/*
-config_*.json
-schema_*.xlsx
-schema_*.dbml
+config*.json
 
-outputFiles/*.dbml
-outputFiles/*.xlsx
-outputFiles/*.txt
-outputFiles/~$*.xlsx
+outputFiles/*
 *~$*.xlsx
 
 googleCredential.json
