@@ -11,8 +11,9 @@ const main = async function (configFileName) {
     const filterTables = config.filterTables;                                             // 是否篩選資料表
     const reportPath = './outputFiles/' + (config.outputXlsxFileName || "匯出報表.xlsx");  // 匯出 報表 路逕
     const dbmlPath = './outputFiles/' + (config.outputDBMLFileName || "schema.dbml");     // 匯出 .dbml 路逕
-    const infoPath = './outputFiles/匯出資訊.txt';                                         // 匯出 .txt 路逕
+    const infoPath = './outputFiles/本次匯出資訊.txt';                                         // 匯出 .txt 路逕
     const dbmlProjectName = config.dbmlProjectName || 'TEST';                             // 匯出 .dbml 中的專案名稱
+    const dbmlProjectNote = config.dbmlProjectNote || '';                                 // 匯出 .dbml 中的專案註解說明
     const reportStyle = config.reportStyle || {                                           // 報表預設樣式
         "fontSize": 12,
         "fontName": "微軟正黑體",
@@ -60,7 +61,7 @@ const main = async function (configFileName) {
     console.log(`已匯出資訊至: ${infoPath}`);
 
     // 匯出：DBML
-    const dbmlContent = parser.GetDBMLContent(dbmlProjectName);
+    const dbmlContent = parser.GetDBMLContent(dbmlProjectName, dbmlProjectNote);
     fs.writeFileSync(dbmlPath, dbmlContent, 'utf-8');
     console.log(`已匯出DBML至: ${dbmlPath}`);
 

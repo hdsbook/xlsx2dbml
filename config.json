@@ -13,6 +13,7 @@
     "outputXlsxFileName": "匯出報表.xlsx",
 
     "dbmlProjectName": "TEST",
+    "dbmlProjectNote": "TEST",
 
     "schemaTitles": {
         "tableName": "Table 名稱",

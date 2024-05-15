@@ -197,15 +197,17 @@ SchemaParser.prototype.GetAllFields = function () {
     });
 }
 
-SchemaParser.prototype.GetDBMLContent = function (dbmlProjectName) {
+SchemaParser.prototype.GetDBMLContent = function (dbmlProjectName, dbmlProjectNote) {
     const that = this;
+
+    dbmlProjectNote = dbmlProjectNote || dbmlProjectName;
 
     // 生成 DBML 語法
     let dbmlContent =
         `Project ${dbmlProjectName}{
 database_type: 'Oracle'
 Note: '''
-    # TEST Schedule Database
+    ### ${dbmlProjectNote}
 '''
 }\n\n`;
     let allFields = that.GetAllFields();
