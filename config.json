@@ -1,4 +1,5 @@
 {
+    "autoFixFKs": false,
     "filterTables": [
         
     ],

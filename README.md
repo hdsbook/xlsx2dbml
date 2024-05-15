@@ -25,6 +25,7 @@ node main.js
 
 |            設定參數 | 說明                                                                            |
 | ------------------: | ------------------------------------------------------------------------------- |
+|          autoFixFKs | 若設定為true，會自動將沒有對應資料表的外鍵移除                                  |
 |        filterTables | 篩選只要產出哪些table的內容，ex: `["COURSE", "COURSE_TYPE"]`，空陣列為不篩選    |
 |      readFromGoogle | 是否從google sheet讀取，true則從google sheet讀取，false則從檔案讀取             |
 | googleSpreadSheetId | (readFromGoogle = true) google 工作表ID                                         |

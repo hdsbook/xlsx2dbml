@@ -38,10 +38,12 @@ const main = async function (configFileName) {
         JSON.parse(fs.readFileSync('googleCredential.json')) :
         {};
 
+    const autoFixFKs = config.autoFixFKs || false; // 是否自動修正外鍵錯誤(移除沒有對應資料表的外鍵)
+
 
 
     // 讀取資料 ------------------------------------------------------------------------
-    const parser = new SchemaParser(filterTables, schemaTitles);
+    const parser = new SchemaParser(filterTables, schemaTitles, autoFixFKs);
     if (readFromGoogle) {
         const reader = new GoogleSheetReader(googleSpreadSheetId, googleCredential);
         await parser.SetDataByGoogleSheetReader(reader, googleSheetName);

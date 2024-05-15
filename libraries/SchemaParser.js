@@ -7,11 +7,12 @@ const ExcelJS = require('exceljs');
  *  {tableName: {tableNote: 資料表註解, tableFields: [{fieldName, dataType, note, isPK, isNN, defaultValue, isUnique, reference}, ...]}}, ...
  * ]
  */
-const SchemaParser = function (filterTables, schemaTitles) {
+const SchemaParser = function (filterTables, schemaTitles, autoFixFKs) {
     const that = this;
 
     that.filterTables = filterTables;
     that.schemaTitles = schemaTitles;
+    that.autoFixFKs = autoFixFKs;
     that.headerNames = {};
     that.rawDataList = [];
 }
@@ -20,10 +21,41 @@ SchemaParser.prototype.SetRawDataList = function (rawDataList) {
     const that = this;
 
     that.rawDataList = rawDataList;
-    
+
     // 初始化 tables 物件
     that.tables = that.RawDataToTables(rawDataList);
-    
+
+    // 是否自動修正外鍵問題(自動移除沒有加入的資料表的外鍵)
+    if (that.autoFixFKs) {
+        const tableNames = that.GetTableNames();
+
+        // 所有有設定外鍵關聯的欄位
+        const allRefFields = that.GetAllFields()
+            .filter(field => field.reference)
+            .map(field => {
+                const refSplit = field.reference.split('.')
+                return {
+                    tableName: field.tableName,
+                    fieldName: field.fieldName,
+                    fkTableName: refSplit[0],
+                    fkFieldName: refSplit[1]
+                }
+            });
+
+        // 外鍵Table不存在的外鍵
+        const tableNotIncludedRefs = allRefFields
+            .filter(ref => !tableNames.includes(ref.fkTableName));
+
+        // 修正：取消外鍵值
+        tableNotIncludedRefs.forEach(ref => {
+            that.tables[ref.tableName].tableFields.forEach(field => {
+                if (field.fieldName == ref.fieldName) {
+                    field.reference = '';
+                }
+            })
+        })
+    }
+
     // 檢查若有異常，顯示Log
     that.LogErrorIfNeeded(rawDataList);
 }
@@ -39,7 +71,7 @@ SchemaParser.prototype.SetDataByGoogleSheetReader = async function (googleSheetR
     sheetRows.forEach(row => {
         const rawData = {};
         row.forEach(cell => {
-            const {title, value} = cell;
+            const { title, value } = cell;
             rawData[title] = value;
         })
         rawDataList.push(rawData);
@@ -49,7 +81,7 @@ SchemaParser.prototype.SetDataByGoogleSheetReader = async function (googleSheetR
 
 SchemaParser.prototype.SetDataByFile = async function (inputFilePath) {
     const that = this;
-    
+
     // 從本機端檔案讀取資料
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(inputFilePath);
@@ -58,7 +90,7 @@ SchemaParser.prototype.SetDataByFile = async function (inputFilePath) {
     const rawDataList = [];
     workbook.eachSheet(sheet => {
         sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-            
+
             const rowData = {};
             row.eachCell({ includeEmpty: false }, (cell, colNumber) => {
                 if (rowNumber == 1) { // 第一列標題
@@ -138,7 +170,7 @@ SchemaParser.prototype.LogErrorIfNeeded = function () {
             const configHeaders = Object.values(that.schemaTitles);
             const fileHeaders = Object.values(that.headerNames);
             const notExistHeaders = configHeaders.filter(name => !fileHeaders.includes(name));
-            
+
             if (notExistHeaders.length > 0) {
                 console.error(`\n提示，資料來源檔案缺少以下標題：${notExistHeaders.join(', ')}\n`);
             }
@@ -156,7 +188,13 @@ SchemaParser.prototype.GetTableNotes = function () {
 }
 SchemaParser.prototype.GetAllFields = function () {
     const that = this;
-    return Object.entries(that.tables).flatMap(([tableName, { tableFields, tableNote }]) => tableFields);
+    return Object.entries(that.tables).flatMap(([tableName, { tableFields, tableNote }]) => {
+        tableFields.forEach(field => {
+            field.tableName = tableName;
+            field.tableNote = tableNote;
+        })
+        return tableFields;
+    });
 }
 
 SchemaParser.prototype.GetDBMLContent = function (dbmlProjectName) {
