@@ -24,10 +24,10 @@ DBMLReporter.prototype.HandleParseError = function (error, dbmlFilePath, dbmlCon
     const errorLines = lines.slice(start.line - 1, end.line);
 
     console.error('DBML parse error:');
-    console.error(`錯誤檔案：${dbmlFilePath}:`);
-    console.error(`錯誤行數：${start.line}:`);
+    console.error(`錯誤檔案: ${dbmlFilePath}`);
+    console.error(`錯誤行數: ${start.line}`);
     console.error(errorLines.join('\n') + '\n');
-    console.error(`錯誤訊息：${error.message}`);
+    console.error(`錯誤訊息: ${error.message}`);
     process.exit(0);
 }
 

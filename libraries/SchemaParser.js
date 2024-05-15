@@ -130,16 +130,18 @@ SchemaParser.prototype.LogErrorIfNeeded = function () {
     const that = this;
 
     const hasNoTables = that.GetTableNames().length == 0;
-    const hasNoFields = that.GetAllFields().length == 0;
-    const isAbnormal = hasNoTables || hasNoFields;
-
-    if (isAbnormal) {
-        const configHeaders = Object.values(that.schemaTitles);
-        const fileHeaders = Object.values(that.headerNames);
-        const notExistHeaders = configHeaders.filter(name => !fileHeaders.includes(name));
-        
-        if (notExistHeaders.length > 0) {
-            console.error(`\n警告！設定檔中 schemaTitles 包含不存在於資料來源檔案的標題：${notExistHeaders.join(', ')}\n`);
+    if (hasNoTables) {
+        console.error(`\n讀取結果沒有任何資料表，請檢查filterTables設定或來源檔案內容\n`);
+    } else {
+        const hasNoFields = that.GetAllFields().length == 0;
+        if (hasNoFields) {
+            const configHeaders = Object.values(that.schemaTitles);
+            const fileHeaders = Object.values(that.headerNames);
+            const notExistHeaders = configHeaders.filter(name => !fileHeaders.includes(name));
+            
+            if (notExistHeaders.length > 0) {
+                console.error(`\n提示，資料來源檔案缺少以下標題：${notExistHeaders.join(', ')}\n`);
+            }
         }
     }
 }
