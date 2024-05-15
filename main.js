@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const SchemaParser = require('./libraries/SchemaParser.js');
 const DBMLReporter = require('./libraries/DBMLReporter.js');
 const command = require('./libraries/Command.js');
@@ -9,12 +10,12 @@ const main = async function (configFileName) {
     const config = JSON.parse(fs.readFileSync(`./${configFileName}`));                    // 設定檔位置
     const schemaTitles = config.schemaTitles;                                             // 欄位標題
     const filterTables = config.filterTables;                                             // 是否篩選資料表
-    const reportPath = './outputFiles/' + (config.outputXlsxFileName || "匯出報表.xlsx");  // 匯出 報表 路逕
-    const dbmlPath = './outputFiles/' + (config.outputDBMLFileName || "schema.dbml");     // 匯出 .dbml 路逕
-    const infoPath = './outputFiles/本次匯出資訊.txt';                                         // 匯出 .txt 路逕
-    const dbmlProjectName = config.dbmlProjectName || 'TEST';                             // 匯出 .dbml 中的專案名稱
-    const dbmlProjectNote = config.dbmlProjectNote || '';                                 // 匯出 .dbml 中的專案註解說明
-    const reportStyle = config.reportStyle || {                                           // 報表預設樣式
+    const dbmlProjectName = config.dbmlProjectName || 'TEST';       // 匯出 .dbml 中的專案名稱
+    const dbmlProjectNote = config.dbmlProjectNote || '';           // 匯出 .dbml 中的專案註解說明
+    const dbmlPath = path.resolve('./outputFiles/' + (config.outputDBMLFileName || "schema.dbml"));     // 匯出 .dbml 路逕
+    const reportPath = path.resolve('./outputFiles/' + (config.outputXlsxFileName || "匯出報表.xlsx"));  // 匯出 報表 路逕
+    const infoPath = path.resolve('./outputFiles/本次匯出資訊.txt');                                     // 匯出 .txt 路逕
+    const reportStyle = config.reportStyle || {                     // 報表預設樣式
         "fontSize": 12,
         "fontName": "微軟正黑體",
         "englishFontName": "Arial",
@@ -26,6 +27,7 @@ const main = async function (configFileName) {
         }
     };
 
+    
     // 讀取設定：是否於匯出後自動開啟報表檔案
     const autoOpenReport = config.autoOpenReport;                                     // 是否於匯出後自動開啟excel
     const excelPath = config.excelPath;                                               // excel應用程式安裝位置
