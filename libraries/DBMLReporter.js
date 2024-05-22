@@ -14,21 +14,30 @@ const DBMLReporter = function (dbmlFilePath) {
         // 讀取並解析DBML檔案為database物件
         that.database = (new DBMLParser()).parse(dbmlContent, 'dbml');
     } catch (error) {
-        that.HandleParseError(error, dbmlFilePath, dbmlContent);
+        console.error('DBML parse error:');
+        console.error(`錯誤檔案: ${dbmlFilePath}`);
+
+        if (error.diags && error.diags.length > 0) {
+            error.diags.forEach(diag => that.HandleParseError(diag, dbmlContent));
+        } else {
+            that.HandleParseError(error, dbmlContent);
+        }
+        process.exit(0);
     }
 }
 
-DBMLReporter.prototype.HandleParseError = function (error, dbmlFilePath, dbmlContent) {
-    const { start, end } = error.location;
-    const lines = dbmlContent.split('\n');
-    const errorLines = lines.slice(start.line - 1, end.line);
-
-    console.error('DBML parse error:');
-    console.error(`錯誤檔案: ${dbmlFilePath}`);
-    console.error(`錯誤行數: ${start.line}`);
-    console.error(errorLines.join('\n') + '\n');
-    console.error(`錯誤訊息: ${error.message}`);
-    process.exit(0);
+DBMLReporter.prototype.HandleParseError = function (error, dbmlContent) {
+    if (error.location) {
+        const { start, end } = error.location;
+        const lines = dbmlContent.split('\n');
+        const errorLines = lines.slice(start.line - 1, end.line);
+        
+        console.error(`錯誤行數: ${start.line}`);
+        console.error(errorLines.join('\n') + '\n');
+        console.error(`錯誤訊息: ${error.message}`);
+    } else {
+        console.error(`錯誤訊息: ${JSON.stringify(error)}`);
+    }
 }
 
 // 取得關聯對應 (欄位A -> 欄位B)
